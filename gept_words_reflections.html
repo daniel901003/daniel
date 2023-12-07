@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title></title>
+</head>
+<body>
+
+    <h1>GEPT Words 單字測驗 ASP.NET 程式開發心得</h1>
+    作者：CBF110016 陳憲禹
+
+
+    <h2>開發思路與解決方案</h2>
+    一開始連 連接資料庫都是一個問題 有的時候檔案位子 或 檔名不一致就會導致 錯誤  到後來的cs是大家使用CHAT GPT狂查 經過不斷的除錯及修改才有一點點進度
+    <h3>開發過程</h3>
+    後來經過很多同學幫忙終於在我自己的電腦完成連接資料庫 在查詢GPT的過程需要跟GPT講更詳細的敘述才能地到正確的解答 並且修改資料庫名稱...
+    <h3>解決策略</h3>
+    不斷的讓GPT產生更詳細及修改過後的程式
+
+    <h2>使用的技術與引用來源</h2>
+    Chat Gpt 及 老師上課內容
+    <h3>使用的技術</h3>
+    Chat Gpt
+    <h3>引用的資源</h3>
+    老師上課內容 錯誤碼幫助我更快除錯
+
+    <h2>遇到的問題與解決方法</h2>
+
+    <h3>遇到的問題</h3>
+    資料庫無法連接
+    <h3>解決的方法</h3>
+    下載插件
+
+    <h2>修改後的程式內容</h2>
+    在這裡，你可以分享你修改後的程式碼，並解釋你做了哪些改變。
+    <h3>修改的部分</h3>
+    public partial class SimpleWordTest_comb_t : System.Web.UI.Page
+    {
+    int QuizIndex;
+    int CorrectAnswers;
+    protected void Page_Load(object sender, EventArgs e)
+    {
+    if (!IsPostBack)
+    {
+    Session["QuizIndex"] = 0;
+    Session["CorrectAnswers"] = 0;
+    }
+    }
+
+
+    protected void CBF110016_PreviousButton_Click(object sender, EventArgs e)
+    {
+
+    }
+
+    protected void CBF110016_testBtn_Click(object sender, EventArgs e)
+    {
+    this.CBF110016_MV1.ActiveViewIndex = 1;
+
+    }
+    protected void CBF110016_NextButton_Click(object sender, EventArgs e)
+    {
+
+    }
+    protected void CBF110016_DDL1_SelectedIndexChanged(object sender, EventArgs e)
+    {
+
+    string selectedValue = CBF110016_DDL1.SelectedValue;
+
+
+    CBF110016_cambridge.Text = selectedValue;
+    }
+
+    protected void SqlDataSource1_Selecting(object sender, SqlDataSourceSelectingEventArgs e)
+    {
+
+    }
+
+
+    protected void SqlDataSource1_Selecting1(object sender, SqlDataSourceSelectingEventArgs e)
+    {
+
+    }
+    protected void CBF110016_GV1_SelectedIndexChanged(object sender, EventArgs e)
+    {
+
+    }
+
+
+
+    protected void CBF110016_testBtn_Click1(object sender, EventArgs e)
+    {
+
+    CBF110016_MV1.ActiveViewIndex = 1;
+    replayLink.Visible = false;
+
+    if (CBF110016_DDL1.Items.Count > 0)
+    {
+
+    string selectedWord = CBF110016_DDL1.Items[CBF110016_DDL1.Items.Count - 1].Text;
+
+
+    string selectedExplanation = CBF110016_DDL1.Items[CBF110016_DDL1.Items.Count - 1].Value;
+
+
+    char firstCharacter = selectedWord[0];
+
+
+    CBF110016_ch_hint.Text = selectedExplanation;
+
+
+    CBF110016_input.Text = firstCharacter.ToString();
+
+
+    int wordLength = selectedWord.Length;
+    string underlinesWithSpaces = string.Join(" ", new string('_', wordLength).ToCharArray());
+    CBF110016_input.Text += underlinesWithSpaces;
+    }
+    else
+    {
+
+    CBF110016_ch_hint.Text = "DropDownList 中沒有單字可用於測驗。";
+    }
+    }
+
+
+
+    protected void CBF110016_GV1_RowDeleted(object sender, GridViewDeletedEventArgs e)
+    {
+    if (e.Exception == null)
+    {
+
+    CBF110016_DDL1.DataBind();
+    }
+    }
+
+    private void ShowNextQuestion()
+    {
+    int quizIndex = (int)Session["QuizIndex"];
+
+
+    if (quizIndex < CBF110016_DDL1.Items.Count - 1)
+    {
+    string selectedExplanation = CBF110016_DDL1.Items[quizIndex].Value;
+    string selectedWord = CBF110016_DDL1.Items[quizIndex].Text;
+    char firstCharacter = selectedWord[0];
+
+
+    CBF110016_ch_hint.Text = selectedExplanation;
+    CBF110016_input.Text = firstCharacter.ToString();
+    int wordLength = selectedWord.Length;
+    string underlinesWithSpaces = string.Join(" ", new string('_', wordLength).ToCharArray());
+    CBF110016_input.Text += underlinesWithSpaces;
+
+    CBF110016_correctAnswer.Text = string.Empty;
+    }
+    }
+    protected void CBF110016_nextQBtn_Click(object sender, EventArgs e)
+    {
+
+
+    int quizIndex = (int)Session["QuizIndex"];
+    int correctAnswers = (int)Session["CorrectAnswers"];
+
+
+    if (quizIndex < CBF110016_DDL1.Items.Count - 1)
+    {
+
+
+
+
+    quizIndex++;
+    Session["QuizIndex"] = quizIndex;
+    Session["CorrectAnswers"] = correctAnswers;
+
+
+    if (quizIndex == 9)
+    {
+    CBF110016_ch_hint.Visible = false;
+    CBF110016_input.Visible = false;
+    CBF110016_DDL1.Visible = false;
+    CBF110016_endBtn.Visible = true;
+    CBF110016_nextQBtn.Visible = false;
+    replayLink.Visible = true;
+    return;
+    }
+
+    ShowNextQuestion();
+    }
+    }
+    protected void ReplayQuiz(object sender, EventArgs e)
+    {
+    Session["CorrectAnswers"] = 0;
+    Session["QuizIndex"] = 0;
+
+    CBF110016_input.Visible = true;
+    CBF110016_DDL1.Visible = true;
+    CBF110016_ch_hint.Visible = true;
+    CBF110016_endBtn.Visible = false;
+
+
+    replayLink.Visible = false;
+
+
+    ShowNextQuestion();
+    }
+    protected void CBF110016_DDL1_SelectedIndexChanged1(object sender, EventArgs e)
+    {
+
+    }
+
+
+
+
+    protected void CBF110016_endBtn_Click(object sender, EventArgs e)
+    {
+
+    }
+
+
+    }
+    <h3>程式碼說明</h3>
+    Page_Load:
+
+    初始化QuizIndex和CorrectAnswers變數。
+    如果頁面不是回傳（即頁面第一次載入），則將Session變數QuizIndex和CorrectAnswers初始化為0。
+    CBF110016_testBtn_Click:
+
+    處理按鈕（CBF110016_testBtn）的點擊事件，以切換到另一個視圖（ActiveViewIndex = 1）。
+    CBF110016_testBtn_Click1:
+
+    處理另一個按鈕的點擊事件（CBF110016_testBtn_Click1）。
+    將活動視圖索引設置為1，隱藏重新播放連結，並基於從DropDownList（CBF110016_DDL1）中選擇的單字填充一些控制項。
+    CBF110016_nextQBtn_Click:
+
+    處理“下一個問題”按鈕的點擊事件。
+    從Session中獲取當前測驗索引，進行增量，並更新Session變數。
+    如果測驗索引為9，隱藏某些控制項，顯示其他控制項以指示測驗結束。
+    調用ShowNextQuestion方法以顯示下一個問題。
+    ReplayQuiz:
+
+    將Session變數（CorrectAnswers和QuizIndex）重置為0。
+    根據測驗的狀態顯示或隱藏某些控制項。
+    調用ShowNextQuestion以顯示第一個問題。
+    ShowNextQuestion:
+
+    根據當前測驗索引顯示下一個問題並更新相關控制項。
+    CBF110016_GV1_RowDeleted:
+
+    處理GridView（CBF110016_GV1）的RowDeleted事件。
+    如果刪除過程中未發生異常，則將數據重新綁定到DropDownList（CBF110016_DDL1）。
+    CBF110016_DDL1_SelectedIndexChanged:
+
+    處理DropDownList（CBF110016_DDL1）的SelectedIndexChanged事件。
+    根據所選值更新另一個控制項的文本（CBF110016_cambridge）。
+    CBF110016_endBtn_Click:
+
+    處理“結束”按鈕的點擊事件的空方法。
+    <h2>程式執行畫面</h2>
+    在這裡，你可以分享你的程式執行畫面，並解釋每個畫面的功能。
+    <h3>功能介紹</h3>
+    a. 以gridview分頁顯示資料表內容(請不要顯示 id欄位), 並允許編輯與刪除資料。請將 GridView 的名稱設定為 "學號_GV1"，並將 "學號" 部分替換為您的學號。
+    b. 欲刪除資料前會先跟使用者做確認. 確認訊息為"你確定要刪除嗎?"
+    c. 顯示時編輯刪除按鈕不要換行 (設定ItemStyle的Wrap=False)，當按下編輯按鈕時, sentence欄位會充滿整個儲存格(width='98%', 多行)
+    d. 點選DropDownList中的項目會顯示對應的中文解釋，依次記錄在下方。換頁(按下前10個單字或後10個單字按鈕)後則清空，並呈現第一筆單字的英文中文對應及超連結。超連結只有在英文部份出現，會連至cambridge字典，方便使用者查詢該單字。
+    <h3>畫面展示</h3>
+
+    <h2>個人心得與反思</h2>
+    在這裡，你可以分享你對於這次開發經驗的感想，以及你從中學到了什麼。
+    <h3>學習心得</h3>
+    <h3>未來展望</h3>
+
+
+</body>
+</html>
